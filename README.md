@@ -1,2 +1,2 @@
 # Practice Compose Dictionary App
- App created to practice Jetpack Compose from Google
+ App created to practice Jetpack Compose
