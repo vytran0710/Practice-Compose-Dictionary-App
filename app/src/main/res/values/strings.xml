@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">My Pratice Compose Dictionary</string>
+    <string name="shiken">試験</string>
+    <string name="search_words">Search word(s)</string>
+    <string name="common_word">Common word</string>
+    <string name="forms_">Form(s):</string>
+    <string name="definitions_">Definition(s):</string>
+    <string name="searching_">Searching...</string>
+</resources>
