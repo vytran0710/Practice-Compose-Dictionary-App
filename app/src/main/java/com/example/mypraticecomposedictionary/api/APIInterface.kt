@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 interface APIInterface {
     @GET("search/words")
-    fun searchWord(
+    suspend fun searchWord(
         @Query("keyword") keyword: String
-    ): Call<Word>
+    ): Word
 }

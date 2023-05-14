@@ -11,22 +11,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.example.mypraticecomposedictionary.R
-import com.example.mypraticecomposedictionary.model.Data
 import com.example.mypraticecomposedictionary.model.UiState
 import com.example.mypraticecomposedictionary.viewmodel.MainViewModel
 import com.google.gson.Gson
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @Composable
 fun SearchResultList(
@@ -34,28 +27,9 @@ fun SearchResultList(
     mainViewModel: MainViewModel,
     onNavigateToView: (String) -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val searchResult = remember {
-        mutableStateListOf<Data>()
-    }
-    val uiState = remember {
-        mutableStateOf(UiState.Idle)
-    }
-    LaunchedEffect(key1 = Unit)
-    {
-        coroutineScope.launch {
-            mainViewModel.searchState.collectLatest {
-                uiState.value = it.currentState
-                if (it.currentState == UiState.Success)
-                {
-                    searchResult.clear()
-                    searchResult.addAll(it.data!!.data)
-                }
-            }
-        }
-    }
     val elementPadding = dimensionResource(R.dimen.element_padding)
-    if (uiState.value == UiState.Loading) {
+    val currentState = mainViewModel.searchState.collectAsState()
+    if (currentState.value.currentState == UiState.Loading) {
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -65,7 +39,7 @@ fun SearchResultList(
             Text(text = searchingString)
             CircularProgressIndicator()
         }
-    } else {
+    } else if (currentState.value.currentState == UiState.Success) {
         LazyColumn(modifier = modifier)
         {
             item {
@@ -75,7 +49,7 @@ fun SearchResultList(
                         .padding(top = elementPadding)
                 )
             }
-            items(searchResult)
+            items(currentState.value.data?.data ?: return@LazyColumn)
             {
                 Box(
                     modifier = Modifier
